@@ -1,6 +1,7 @@
 
 """Aplicación FastAPI con Google Drive, OpenAI RAG y OAuth 2.0."""
 
+import os
 from pathlib import Path
 from ipaddress import ip_address
 
@@ -13,8 +14,6 @@ from app.core.config import settings
 from app.models.documento import AskRequest, AskResponse
 from app.services.sync_service import SyncService
 from app.services.agent_service import AgentService
-
-# Nuevas rutas de autenticación con Google
 from app.services.web_auth import router as auth_router
 
 
@@ -41,7 +40,7 @@ app = FastAPI(
 if not settings.session_secret or len(settings.session_secret) < 32:
     raise RuntimeError(
         "Configura SESSION_SECRET con al menos "
-        "32 caracteres en el archivo .env"
+        "32 caracteres en las variables de entorno"
     )
 
 app.add_middleware(
@@ -55,7 +54,7 @@ app.add_middleware(
 
 
 # ==========================================
-# 3. RUTAS DE AUTENTICACIÓN GOOGLE
+# 3. AUTENTICACIÓN GOOGLE OAUTH 2.0
 # ==========================================
 
 app.include_router(auth_router)
@@ -73,16 +72,51 @@ app.mount(
 
 
 # ==========================================
-# 5. PROTECCIÓN LOCAL DE SINCRONIZACIÓN
+# 5. CONFIGURACIÓN DE SEGURIDAD
+# ==========================================
+
+def public_ask_enabled():
+    """
+    Habilita consultas solamente cuando
+    se configure explícitamente la variable.
+
+    En Vercel permanece deshabilitado
+    durante el primer despliegue.
+    """
+    return (
+        os.getenv("ENABLE_PUBLIC_ASK", "").lower()
+        == "true"
+    )
+
+
+def local_sync_enabled():
+    """
+    Permite sincronización local solamente
+    cuando esté habilitada explícitamente.
+    """
+    return (
+        os.getenv("ENABLE_LOCAL_SYNC", "").lower()
+        == "true"
+    )
+
+
+# ==========================================
+# 6. PROTECCIÓN DE SINCRONIZACIÓN LOCAL
 # ==========================================
 
 def local_only(request: Request):
     """
-    Permite sincronizar únicamente desde localhost.
+    Permite sincronizar únicamente desde localhost
+    cuando ENABLE_LOCAL_SYNC=true.
 
-    Protección temporal para pruebas locales.
-    No equivale a autenticación pública.
+    No habilita sincronización pública.
     """
+
+    if not local_sync_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Sincronización temporalmente deshabilitada"
+        )
 
     host = request.client.host if request.client else ""
 
@@ -106,7 +140,7 @@ def local_only(request: Request):
 
 
 # ==========================================
-# 6. PÁGINA PRINCIPAL
+# 7. PÁGINA PRINCIPAL
 # ==========================================
 
 @app.get("/")
@@ -115,7 +149,7 @@ def index():
 
 
 # ==========================================
-# 7. ESTADO DEL SERVIDOR
+# 8. ESTADO DEL SERVIDOR
 # ==========================================
 
 @app.get("/api/health")
@@ -131,7 +165,7 @@ def health():
 
 
 # ==========================================
-# 8. DOCUMENTOS INDEXADOS
+# 9. DOCUMENTOS INDEXADOS
 # ==========================================
 
 @app.get("/api/documents")
@@ -154,7 +188,7 @@ def documents():
 
 
 # ==========================================
-# 9. CONSULTAR AGENTE CON OPENAI RAG
+# 10. CONSULTAR AGENTE CON OPENAI RAG
 # ==========================================
 
 @app.post(
@@ -162,6 +196,13 @@ def documents():
     response_model=AskResponse
 )
 def ask(payload: AskRequest):
+
+    # Protección temporal para el despliegue
+    if not public_ask_enabled():
+        raise HTTPException(
+            status_code=503,
+            detail="Consultas temporalmente deshabilitadas"
+        )
 
     try:
         if not settings.openai_api_key:
@@ -185,13 +226,13 @@ def ask(payload: AskRequest):
             status_code=502,
             detail=(
                 "Error al consultar OpenAI. "
-                "Revisa el registro local."
+                "Revisa el registro del servidor."
             )
         )
 
 
 # ==========================================
-# 10. SINCRONIZAR GOOGLE DRIVE
+# 11. SINCRONIZAR GOOGLE DRIVE
 # ==========================================
 
 @app.post(
