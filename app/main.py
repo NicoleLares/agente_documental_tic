@@ -1,5 +1,5 @@
 
-"""Aplicación FastAPI con Google Drive, OpenAI RAG y OAuth 2.0."""
+"""Archivo TIC IA - FastAPI, Google Drive, OpenAI RAG y OAuth 2.0."""
 
 import os
 from pathlib import Path
@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
+from openai import OpenAI
 
 from app.core.config import settings
 from app.models.documento import AskRequest, AskResponse
@@ -77,11 +78,8 @@ app.mount(
 
 def public_ask_enabled():
     """
-    Habilita consultas solamente cuando
-    se configure explícitamente la variable.
-
-    En Vercel permanece deshabilitado
-    durante el primer despliegue.
+    Habilita consultas cuando la variable
+    ENABLE_PUBLIC_ASK está configurada en true.
     """
     return (
         os.getenv("ENABLE_PUBLIC_ASK", "").lower()
@@ -91,8 +89,8 @@ def public_ask_enabled():
 
 def local_sync_enabled():
     """
-    Permite sincronización local solamente
-    cuando esté habilitada explícitamente.
+    Permite sincronización local cuando
+    ENABLE_LOCAL_SYNC está configurada en true.
     """
     return (
         os.getenv("ENABLE_LOCAL_SYNC", "").lower()
@@ -106,10 +104,10 @@ def local_sync_enabled():
 
 def local_only(request: Request):
     """
-    Permite sincronizar únicamente desde localhost
-    cuando ENABLE_LOCAL_SYNC=true.
+    Permite sincronizar únicamente desde localhost.
 
-    No habilita sincronización pública.
+    La sincronización pública de Google Drive
+    todavía no está habilitada.
     """
 
     if not local_sync_enabled():
@@ -173,18 +171,69 @@ def documents():
 
     manifest = SyncService.load_manifest()
 
-    indexed_documents = manifest.get(
-        "documents", {}
+    local_docs = manifest.get("documents", {})
+
+    store_id = (
+        settings.vector_store_id
+        or manifest.get("vector_store_id")
     )
 
-    return {
-        "documents": list(indexed_documents.values()),
-        "indexed": len(indexed_documents),
-        "vector_store_configured": bool(
-            settings.vector_store_id
-            or manifest.get("vector_store_id")
+    # Utilizar el manifiesto local si contiene documentos.
+    if local_docs:
+        return {
+            "documents": list(local_docs.values()),
+            "indexed": len(local_docs),
+            "vector_store_configured": bool(store_id)
+        }
+
+    # Verificar que exista un Vector Store.
+    if not store_id:
+        return {
+            "documents": [],
+            "indexed": 0,
+            "vector_store_configured": False
+        }
+
+    # En Vercel, recuperar documentos desde OpenAI.
+    try:
+        client = OpenAI(
+            api_key=settings.openai_api_key
         )
-    }
+
+        response = client.vector_stores.files.list(
+            vector_store_id=store_id,
+            limit=100
+        )
+
+        indexed_documents = []
+
+        for item in response.data:
+
+            file_info = client.files.retrieve(
+                item.id
+            )
+
+            indexed_documents.append({
+                "name": file_info.filename,
+                "url": None,
+                "openai_file_id": item.id,
+                "status": item.status
+            })
+
+        return {
+            "documents": indexed_documents,
+            "indexed": len(indexed_documents),
+            "vector_store_configured": True
+        }
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=(
+                "No se pudieron recuperar los "
+                "documentos de OpenAI"
+            )
+        ) from exc
 
 
 # ==========================================
@@ -197,7 +246,7 @@ def documents():
 )
 def ask(payload: AskRequest):
 
-    # Protección temporal para el despliegue
+    # Protección temporal para Vercel.
     if not public_ask_enabled():
         raise HTTPException(
             status_code=503,
