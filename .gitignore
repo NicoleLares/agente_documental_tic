@@ -1,10 +1,29 @@
+
+# Entorno virtual de Python
 .venv/
+
+# Variables privadas
 .env
+.env.*
+!.env.example
+
+# Credenciales Google OAuth
 credentials.json
 token.json
+client_secret_*.json
+
+# Archivos temporales Python
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Datos locales de sincronización
 data/*
 !data/.gitkeep
+
+# Archivos locales de Vercel
+.vercel/
+
+# Logs y temporales
+*.log
 .DS_Store
