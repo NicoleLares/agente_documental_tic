@@ -1,243 +1,237 @@
 
-"""Archivo TIC IA - FastAPI, Google Drive, OpenAI RAG y OAuth 2.0."""
+"""
+Archivo TIC IA - Practica 2.3
 
-import os
+Backend FastAPI compatible con:
+- Localhost: Google Drive y sincronizacion.
+- Vercel: consultas a OpenAI y File Search.
+"""
+
+import logging
 from pathlib import Path
 from ipaddress import ip_address
+from secrets import compare_digest
 
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Request,
+    Depends
+)
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from starlette.middleware.sessions import SessionMiddleware
-from openai import OpenAI
 
 from app.core.config import settings
 from app.models.documento import AskRequest, AskResponse
-from app.services.sync_service import SyncService
-from app.services.agent_service import AgentService
-from app.services.web_auth import router as auth_router
 
 
 # ==========================================
-# 1. CONFIGURACIÓN GENERAL
+# CONFIGURACION
 # ==========================================
+
+log = logging.getLogger("archivo_tic_ia")
 
 ROOT = Path(__file__).resolve().parents[1]
 
 app = FastAPI(
     title="Archivo TIC IA",
-    version="1.0.0",
-    description=(
-        "Agente documental con Google Drive, "
-        "OpenAI File Search (RAG) y OAuth 2.0"
-    )
+    description="Agente documental con OpenAI y Google Drive",
+    version="1.2.0"
 )
 
 
 # ==========================================
-# 2. CONFIGURACIÓN DE SESIONES
+# ORIGENES PERMITIDOS
 # ==========================================
 
-if not settings.session_secret or len(settings.session_secret) < 32:
-    raise RuntimeError(
-        "Configura SESSION_SECRET con al menos "
-        "32 caracteres en las variables de entorno"
-    )
+# Este es el origen correcto de GitHub Pages.
+# NO incluye /agente-documental-tic/.
 
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=settings.session_secret,
-    session_cookie="archivo_tic_session",
-    max_age=3600,
-    same_site="lax",
-    https_only=settings.app_base_url.startswith("https://"),
-)
+allowed_origins = {
+    "https://NicoleLares.github.io"
+}
 
+# Agregar el origen de las variables de entorno.
 
-# ==========================================
-# 3. AUTENTICACIÓN GOOGLE OAUTH 2.0
-# ==========================================
-
-app.include_router(auth_router)
-
-
-# ==========================================
-# 4. ARCHIVOS ESTÁTICOS
-# ==========================================
-
-app.mount(
-    "/assets",
-    StaticFiles(directory=ROOT / "assets"),
-    name="assets"
-)
-
-
-# ==========================================
-# 5. CONFIGURACIÓN DE SEGURIDAD
-# ==========================================
-
-def public_ask_enabled():
-    """
-    Habilita consultas cuando la variable
-    ENABLE_PUBLIC_ASK está configurada en true.
-    """
-    return (
-        os.getenv("ENABLE_PUBLIC_ASK", "").lower()
-        == "true"
-    )
-
-
-def local_sync_enabled():
-    """
-    Permite sincronización local cuando
-    ENABLE_LOCAL_SYNC está configurada en true.
-    """
-    return (
-        os.getenv("ENABLE_LOCAL_SYNC", "").lower()
-        == "true"
+if settings.frontend_origin:
+    allowed_origins.add(
+        settings.frontend_origin.strip().rstrip("/")
     )
 
 
 # ==========================================
-# 6. PROTECCIÓN DE SINCRONIZACIÓN LOCAL
+# CACHE
+# ==========================================
+
+@app.middleware("http")
+async def no_api_cache(request: Request, call_next):
+
+    response = await call_next(request)
+
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+
+    return response
+
+
+# ==========================================
+# ARCHIVOS ESTATICOS
+# ==========================================
+
+# GitHub Pages sirve el frontend en producción.
+# FastAPI sirve los archivos HTML/CSS/JS en local.
+
+if (
+    not settings.is_vercel
+    and (ROOT / "assets").is_dir()
+):
+    app.mount(
+        "/assets",
+        StaticFiles(directory=ROOT / "assets"),
+        name="assets"
+    )
+
+
+# ==========================================
+# SEGURIDAD DE SINCRONIZACION
 # ==========================================
 
 def local_only(request: Request):
-    """
-    Permite sincronizar únicamente desde localhost.
 
-    La sincronización pública de Google Drive
-    todavía no está habilitada.
-    """
+    # OAuth de escritorio nunca debe
+    # ejecutarse desde Vercel.
 
-    if not local_sync_enabled():
+    if settings.is_vercel:
         raise HTTPException(
-            status_code=403,
-            detail="Sincronización temporalmente deshabilitada"
+            status_code=404,
+            detail="Sincronización disponible solo en localhost"
         )
 
-    host = request.client.host if request.client else ""
+    host = (
+        request.client.host
+        if request.client
+        else ""
+    )
 
     try:
         if not ip_address(host).is_loopback:
-            raise ValueError()
+            raise ValueError("No es loopback")
 
     except ValueError:
         raise HTTPException(
             status_code=403,
-            detail="Sincronización disponible solo desde localhost"
+            detail="Sincronización permitida solo desde localhost"
         )
 
-    key = settings.local_admin_key
+    # Clave administrativa local opcional.
 
-    if key and request.headers.get("X-Admin-Key") != key:
-        raise HTTPException(
-            status_code=401,
-            detail="Clave administrativa incorrecta"
+    if settings.local_admin_key:
+
+        provided = request.headers.get(
+            "X-Admin-Key", ""
         )
+
+        if not compare_digest(
+            provided,
+            settings.local_admin_key
+        ):
+            raise HTTPException(
+                status_code=401,
+                detail="Clave administrativa incorrecta"
+            )
 
 
 # ==========================================
-# 7. PÁGINA PRINCIPAL
+# RUTA PRINCIPAL
 # ==========================================
 
 @app.get("/")
 def index():
+
+    if settings.is_vercel:
+        return {
+            "service": "Archivo TIC IA API",
+            "status": "ok"
+        }
+
     return FileResponse(ROOT / "index.html")
 
 
 # ==========================================
-# 8. ESTADO DEL SERVIDOR
+# ESTADO DEL SERVIDOR
 # ==========================================
 
 @app.get("/api/health")
 def health():
 
-    return {
-        "status": "ok",
-        "configured": bool(
+    if settings.is_vercel:
+
+        configured = bool(
+            settings.openai_api_key
+            and settings.vector_store_id
+            and settings.document_manifest_b64
+        )
+
+    else:
+
+        configured = bool(
             settings.openai_api_key
             and settings.drive_folder_id
         )
+
+    return {
+        "status": "ok",
+        "configured": configured
     }
 
 
 # ==========================================
-# 9. DOCUMENTOS INDEXADOS
+# DOCUMENTOS INDEXADOS
 # ==========================================
 
 @app.get("/api/documents")
 def documents():
 
-    manifest = SyncService.load_manifest()
+    # Importacion diferida.
+    # /api/health puede funcionar incluso
+    # si el indice tiene un problema.
 
-    local_docs = manifest.get("documents", {})
-
-    store_id = (
-        settings.vector_store_id
-        or manifest.get("vector_store_id")
+    from app.services.document_index import (
+        load_document_index
     )
 
-    # Utilizar el manifiesto local si contiene documentos.
-    if local_docs:
-        return {
-            "documents": list(local_docs.values()),
-            "indexed": len(local_docs),
-            "vector_store_configured": bool(store_id)
-        }
-
-    # Verificar que exista un Vector Store.
-    if not store_id:
-        return {
-            "documents": [],
-            "indexed": 0,
-            "vector_store_configured": False
-        }
-
-    # En Vercel, recuperar documentos desde OpenAI.
     try:
-        client = OpenAI(
-            api_key=settings.openai_api_key
-        )
+        manifest = load_document_index()
 
-        response = client.vector_stores.files.list(
-            vector_store_id=store_id,
-            limit=100
-        )
-
-        indexed_documents = []
-
-        for item in response.data:
-
-            file_info = client.files.retrieve(
-                item.id
-            )
-
-            indexed_documents.append({
-                "name": file_info.filename,
-                "url": None,
-                "openai_file_id": item.id,
-                "status": item.status
-            })
-
-        return {
-            "documents": indexed_documents,
-            "indexed": len(indexed_documents),
-            "vector_store_configured": True
-        }
-
-    except Exception as exc:
+    except ValueError as exc:
         raise HTTPException(
-            status_code=502,
-            detail=(
-                "No se pudieron recuperar los "
-                "documentos de OpenAI"
-            )
+            status_code=503,
+            detail=str(exc)
         ) from exc
+
+    entries = manifest.get("documents", {})
+
+    if not isinstance(entries, dict):
+        raise HTTPException(
+            status_code=503,
+            detail="El inventario documental tiene un formato inválido"
+        )
+
+    docs = list(entries.values())
+
+    return {
+        "documents": docs,
+        "indexed": len(docs),
+        "vector_store_configured": bool(
+            settings.vector_store_id
+            or manifest.get("vector_store_id")
+        )
+    }
 
 
 # ==========================================
-# 10. CONSULTAR AGENTE CON OPENAI RAG
+# CONSULTAR OPENAI
 # ==========================================
 
 @app.post(
@@ -246,42 +240,49 @@ def documents():
 )
 def ask(payload: AskRequest):
 
-    # Protección temporal para Vercel.
-    if not public_ask_enabled():
+    if not settings.openai_api_key:
         raise HTTPException(
             status_code=503,
-            detail="Consultas temporalmente deshabilitadas"
+            detail="Falta la configuración de OpenAI"
         )
 
     try:
-        if not settings.openai_api_key:
-            raise ValueError(
-                "Falta OPENAI_API_KEY"
-            )
 
-        return AgentService().ask(
+        # Solo importar OpenAI cuando
+        # se realice una consulta.
+
+        from app.services.agent_service import (
+            AgentService
+        )
+
+        agent = AgentService()
+
+        return agent.ask(
             payload.question,
             payload.use_search
         )
 
     except ValueError as exc:
+
         raise HTTPException(
             status_code=400,
             detail=str(exc)
-        )
+        ) from exc
 
     except Exception:
+
+        log.exception(
+            "Error durante la consulta documental"
+        )
+
         raise HTTPException(
             status_code=502,
-            detail=(
-                "Error al consultar OpenAI. "
-                "Revisa el registro del servidor."
-            )
+            detail="No se pudo completar la consulta de OpenAI"
         )
 
 
 # ==========================================
-# 11. SINCRONIZAR GOOGLE DRIVE
+# SINCRONIZAR GOOGLE DRIVE
 # ==========================================
 
 @app.post(
@@ -290,22 +291,59 @@ def ask(payload: AskRequest):
 )
 def sync():
 
-    try:
-        if not settings.openai_api_key:
-            raise ValueError(
-                "Falta OPENAI_API_KEY"
-            )
+    if not settings.openai_api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Falta la configuración de OpenAI"
+        )
 
-        return SyncService().sync()
+    # Este modulo solo se carga cuando
+    # se sincroniza desde localhost.
+
+    from app.services.sync_service import SyncService
+
+    try:
+
+        service = SyncService()
+
+        return service.sync()
 
     except ValueError as exc:
+
         raise HTTPException(
             status_code=400,
             detail=str(exc)
+        ) from exc
+
+    except Exception:
+
+        log.exception(
+            "Error durante la sincronizacion de Drive"
         )
 
-    except Exception as exc:
         raise HTTPException(
             status_code=502,
-            detail=f"Sincronización fallida: {exc}"
+            detail="No se pudo completar la sincronización"
         )
+
+
+# ==========================================
+# CORS PARA GITHUB PAGES
+# ==========================================
+
+# Se registra al final para envolver los
+# demás middlewares de la aplicación.
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=sorted(allowed_origins),
+    allow_methods=[
+        "GET",
+        "POST",
+        "OPTIONS"
+    ],
+    allow_headers=[
+        "Content-Type"
+    ],
+    allow_credentials=False
+)
