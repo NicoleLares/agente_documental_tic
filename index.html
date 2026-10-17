@@ -1,1 +1,234 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Archivo TIC IA | Agente documental</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="/assets/css/styles.css" rel="stylesheet"></head><body><header class="hero py-4"><div class="container d-flex flex-wrap justify-content-between align-items-center gap-3"><div><div class="eyebrow">PRÁCTICA 2.3 · INTELIGENCIA ARTIFICIAL APLICADA A LAS TIC</div><h1 class="h2 mb-1">Archivo TIC <span>IA</span></h1><p class="m-0 text-white-50">Agente documental con Google Drive y búsqueda semántica RAG</p></div><span class="badge rounded-pill border border-light text-light" id="health">Comprobando servidor…</span></div></header><main class="container py-4"><div class="row g-4"><div class="col-lg-4"><section class="card shell h-100"><div class="card-body"><div class="d-flex align-items-center justify-content-between"><h2 class="h5 mb-0">Base documental</h2><span class="badge text-bg-info" id="doc-count">0</span></div><p class="small text-secondary mt-2">Archivos indexados desde una carpeta autorizada de Google Drive.</p><div id="documents" class="doc-list" aria-live="polite">Sin documentos indexados.</div><button type="button" id="sync" class="btn btn-outline-primary w-100 mt-3">Sincronizar desde Drive</button><p class="small text-secondary mt-2 mb-0">La primera sincronización abrirá OAuth en el equipo donde corre Python. Uso exclusivamente local.</p></div></section></div><div class="col-lg-8"><section class="card shell"><div class="card-body"><h2 class="h5">Consultar al agente</h2><label class="form-label mt-2" for="question">Pregunta sobre los documentos</label><textarea class="form-control" id="question" rows="3" maxlength="3000" placeholder="¿Qué documentos explican Amazon RDS y sus conexiones?" required></textarea><div class="d-flex flex-wrap justify-content-between gap-2 align-items-center mt-3"><div class="form-check form-switch"><input id="use-search" class="form-check-input" type="checkbox" checked><label class="form-check-label" for="use-search">Activar File Search (RAG)</label></div><button class="btn btn-primary" type="button" id="ask">Consultar agente</button></div><div id="message" role="status" class="small mt-3" aria-live="polite"></div></div></section><section class="card shell mt-4"><div class="card-body"><h2 class="h5">Respuesta documental</h2><div id="answer" class="answer mt-3" aria-live="polite">Escribe una pregunta para comenzar.</div><h3 class="h6 mt-4">Fuentes verificables</h3><ul id="sources" class="list-group list-group-flush"></ul></div></section></div></div></main><footer class="container pb-4 small text-center text-secondary">Tecnológico Nacional de México · Campus Pachuca · Ingeniería en Sistemas Computacionales · Práctica 2.3</footer><script type="module" src="/assets/js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#402343">
+  <meta name="description" content="Archivo TIC IA: espacio de investigación y consulta documental con inteligencia artificial.">
+  <title>Archivo TIC IA | Centro de investigación</title>
+  <link rel="stylesheet" href="./assets/css/styles.css?v=20261016-2">
+</head>
+<body class="research-app">
+
+  <!-- ENCABEZADO HORIZONTAL: ya no usamos una barra lateral de navegación. -->
+  <header class="global-header">
+    <a class="header-brand" href="#inicio" aria-label="Archivo TIC IA, ir al inicio">
+      <span class="brand-icon" aria-hidden="true">✳</span>
+      <span class="brand-text">
+        <strong>Archivo TIC <span>IA</span></strong>
+        <small>Centro de investigación</small>
+      </span>
+    </a>
+
+    <nav class="header-nav" aria-label="Navegación principal">
+      <a class="nav-link active" href="#investigacion">Mi espacio</a>
+      <a class="nav-link" href="#biblioteca">Biblioteca</a>
+    </nav>
+
+    <div class="header-right">
+      <div id="health" class="connection-status" role="status" aria-live="polite">
+        <span class="connection-dot" aria-hidden="true"></span>
+        <span id="health-label">Comprobando conexión...</span>
+      </div>
+      <button id="new-chat" class="new-session-button" type="button">
+        <span aria-hidden="true">＋</span> Nueva conversación
+      </button>
+    </div>
+  </header>
+
+  <div class="page-container" id="inicio">
+
+    <!-- BIENVENIDA: más parecida a una mesa de trabajo que a un chat convencional. -->
+    <section class="intro-section" aria-labelledby="intro-title">
+      <div class="intro-copy">
+        <span class="eyebrow">TU ESPACIO DE ESTUDIO E INVESTIGACIÓN</span>
+        <h1 id="intro-title">Tus documentos, <em>nuevas ideas.</em></h1>
+        <p>Consulta tus archivos, encuentra fuentes y contrasta respuestas en un solo espacio.</p>
+      </div>
+
+      <!-- Indicadores en franja compacta, no en tarjetas grandes. -->
+      <div class="activity-strip" aria-label="Estado de esta sesión">
+        <div class="activity-item">
+          <span class="activity-label">Documentos</span>
+          <strong id="stat-documents">0</strong>
+        </div>
+        <div class="activity-item">
+          <span class="activity-label">Modo de consulta</span>
+          <strong id="stat-mode">RAG activado</strong>
+        </div>
+        <div class="activity-item">
+          <span class="activity-label">Preguntas realizadas</span>
+          <strong id="stat-queries">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUERPO: espacio de investigación a la izquierda; archivos a la derecha. -->
+    <div class="research-layout">
+
+      <main class="research-main" id="investigacion">
+
+        <!-- LA PREGUNTA VA ARRIBA: estructura diferente al Proyecto 1. -->
+        <section class="question-workspace" aria-labelledby="question-title">
+          <div class="section-title-row">
+            <div>
+              <span class="section-overline">01 / EMPEZAR</span>
+              <h2 id="question-title">¿Qué quieres investigar?</h2>
+              <p>Escribe una pregunta o utiliza una sugerencia de la bitácora.</p>
+            </div>
+            <span id="mode-tag" class="mode-tag">● File Search activo</span>
+          </div>
+
+          <form id="ask-form" class="research-form">
+            <label class="visually-hidden" for="question">Escribe tu pregunta</label>
+            <textarea
+              id="question"
+              class="question-input"
+              rows="3"
+              minlength="3"
+              maxlength="3000"
+              placeholder="Ejemplo: ¿Qué conceptos principales aparecen en mis documentos?"
+              required
+            ></textarea>
+
+            <div class="question-toolbar">
+              <div class="search-controls">
+                <label class="rag-control" for="use-search">
+                  <input id="use-search" type="checkbox" role="switch" checked>
+                  <span>Usar mis documentos (RAG)</span>
+                </label>
+                <span id="mode-note" class="mode-explanation">Búsqueda documental habilitada</span>
+              </div>
+
+              <div class="question-buttons">
+                <button id="compare" class="compare-button" type="button" title="Comparar respuestas con y sin RAG">
+                  <span aria-hidden="true">⇄</span> Comparar respuestas
+                </button>
+                <button id="ask" class="send-button" type="submit">
+                  Consultar <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-footnote">
+              <span>Consejo: Ctrl + Enter para consultar. Comparar realiza dos solicitudes.</span>
+              <span id="char-count">0 / 3000</span>
+            </div>
+          </form>
+        </section>
+
+        <!-- RESULTADOS ABAJO: se presentan como una bitácora de trabajo. -->
+        <section class="research-log" aria-labelledby="log-title">
+          <div class="log-header">
+            <div>
+              <span class="section-overline">02 / REVISAR</span>
+              <h2 id="log-title">Bitácora de investigación</h2>
+              <p>Respuestas, comparaciones y referencias de tu sesión actual.</p>
+            </div>
+            <button id="export-chat" class="export-button" type="button" disabled>
+              <span aria-hidden="true">↓</span> Exportar sesión
+            </button>
+          </div>
+
+          <div id="message" class="notification" role="status" aria-live="polite" hidden></div>
+
+          <div id="conversation" class="conversation research-thread" aria-live="polite" aria-relevant="additions">
+            <!-- Compatibilidad temporal con el app.js original del Proyecto 2.
+                 El app.js completo lo reemplazará por el chat y el comparador RAG. -->
+            <div class="legacy-response">
+              <h3>Respuesta del asistente</h3>
+              <div id="answer">Escribe una pregunta para comenzar.</div>
+              <h4>Fuentes documentales</h4>
+              <ul id="sources"></ul>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- BIBLIOTECA: panel independiente de consulta documental. -->
+      <aside class="library-panel" id="biblioteca" aria-labelledby="library-title">
+        <div class="library-head">
+          <span class="section-overline">03 / EXPLORAR</span>
+          <div class="library-title-row">
+            <h2 id="library-title">Mis documentos</h2>
+            <span id="doc-count" class="count-badge" aria-label="Documentos disponibles">0</span>
+          </div>
+          <p>Archivos disponibles para tus investigaciones.</p>
+        </div>
+
+        <div class="library-tools">
+          <label for="doc-search">Buscar en la biblioteca</label>
+          <input
+            id="doc-search"
+            class="library-search"
+            type="search"
+            placeholder="Nombre del archivo..."
+            autocomplete="off"
+          >
+
+          <label for="doc-type">Tipo de documento</label>
+          <select id="doc-type" class="library-type">
+            <option value="all">Todos los formatos</option>
+            <option value="pdf">PDF</option>
+            <option value="txt">TXT</option>
+            <option value="docs">Google Docs</option>
+          </select>
+        </div>
+
+        <div id="documents" class="document-list library-results" aria-live="polite">
+          <p class="documents-placeholder">Cargando documentos...</p>
+        </div>
+
+        <div class="library-bottom">
+          <div class="index-info" role="status">
+            <span id="index-dot" class="status-indicator" aria-hidden="true"></span>
+            <span id="index-status">Revisando el índice...</span>
+          </div>
+          <div class="library-buttons">
+            <button id="sync" class="sync-button" type="button">
+              <span id="sync-symbol" aria-hidden="true">↻</span>
+              <span id="sync-label">Sincronizar Drive</span>
+            </button>
+            <button id="refresh-docs" class="refresh-button" type="button" title="Actualizar biblioteca" aria-label="Actualizar biblioteca">↺</button>
+          </div>
+          <p class="sidebar-hint">La sincronización de Google Drive está disponible cuando trabajas en el servidor local.</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="workspace-footer">
+      <span>Archivo TIC IA · Proyecto académico</span>
+      <span>Investigación asistida con inteligencia artificial</span>
+    </footer>
+  </div>
+
+  <!-- PREGUNTAS SUGERIDAS: el JS del Proyecto 1 las activa por data-prompt. -->
+  <template id="empty-state-template">
+    <div class="empty-state notebook-welcome">
+      <div class="welcome-symbol" aria-hidden="true">✳</div>
+      <span class="welcome-label">TU BITÁCORA ESTÁ LISTA</span>
+      <h3>Una buena pregunta es el comienzo.</h3>
+      <p>Elige una de estas ideas o escribe tu propia consulta arriba.</p>
+      <div class="suggestion-grid">
+        <button type="button" class="suggestion" data-prompt="¿Qué temas se abordan en los documentos disponibles?">
+          <span aria-hidden="true">01</span><span>Explorar los temas disponibles</span><span aria-hidden="true">↗</span>
+        </button>
+        <button type="button" class="suggestion" data-prompt="Resume las ideas principales de mis documentos indexados.">
+          <span aria-hidden="true">02</span><span>Crear un resumen documental</span><span aria-hidden="true">↗</span>
+        </button>
+        <button type="button" class="suggestion" data-prompt="Compara los conceptos principales de dos documentos relacionados.">
+          <span aria-hidden="true">03</span><span>Comparar conceptos y fuentes</span><span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <!-- El JS antiguo escucha el clic de #ask, no el envío del formulario.
+       Esta línea evita la recarga temporal hasta actualizar app.js. -->
+  <script>
+    document.getElementById("ask-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+    });
+  </script>
+  <script type="module" src="./assets/js/app.js?v=20261016-2"></script>
+</body>
+</html>
