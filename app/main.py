@@ -49,7 +49,7 @@ app = FastAPI(
 # NO incluye /agente-documental-tic/.
 
 allowed_origins = {
-    "https://NicoleLares.github.io"
+    "https://nicolelares.github.io"
 }
 
 # Agregar el origen de las variables de entorno.
