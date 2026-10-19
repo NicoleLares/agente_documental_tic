@@ -4,7 +4,7 @@ Archivo TIC IA - Practica 2.3
 
 Backend FastAPI compatible con:
 - Localhost: Google Drive y sincronizacion.
-- Vercel: consultas a OpenAI y File Search.
+- Vercel: interfaz web, consultas a OpenAI y File Search.
 """
 
 import logging
@@ -45,14 +45,9 @@ app = FastAPI(
 # ORIGENES PERMITIDOS
 # ==========================================
 
-# Este es el origen correcto de GitHub Pages.
-# NO incluye /agente-documental-tic/.
-
 allowed_origins = {
     "https://nicolelares.github.io"
 }
-
-# Agregar el origen de las variables de entorno.
 
 if settings.frontend_origin:
     allowed_origins.add(
@@ -79,13 +74,11 @@ async def no_api_cache(request: Request, call_next):
 # ARCHIVOS ESTATICOS
 # ==========================================
 
-# GitHub Pages sirve el frontend en producción.
-# FastAPI sirve los archivos HTML/CSS/JS en local.
+# CAMBIO:
+# Habilitar CSS y JavaScript tanto
+# en localhost como en Vercel.
 
-if (
-    not settings.is_vercel
-    and (ROOT / "assets").is_dir()
-):
+if (ROOT / "assets").is_dir():
     app.mount(
         "/assets",
         StaticFiles(directory=ROOT / "assets"),
@@ -146,15 +139,11 @@ def local_only(request: Request):
 # RUTA PRINCIPAL
 # ==========================================
 
+# CAMBIO:
+# Mostrar index.html en ambos entornos.
+
 @app.get("/")
 def index():
-
-    if settings.is_vercel:
-        return {
-            "service": "Archivo TIC IA API",
-            "status": "ok"
-        }
-
     return FileResponse(ROOT / "index.html")
 
 
