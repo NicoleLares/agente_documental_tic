@@ -20,7 +20,7 @@ const IS_LOCAL = [
 
 const API_ROOT = IS_LOCAL
   ? ""
-  : "https://agente-documental-tic-ruby.vercel.app";
+  : "https://agente-documental-tic-xjgr.vercel.app";
 
 
 // Acceso a elementos HTML.
