@@ -1,133 +1,251 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#402343">
-  <meta name="description" content="Archivo TIC IA: espacio de investigación y consulta documental con inteligencia artificial.">
-  <title>Archivo TIC IA | Centro de investigación</title>
-  <link rel="stylesheet" href="./assets/css/styles.css?v=20261018-3">
+
+  <meta
+    name="description"
+    content="Archivo TIC IA: agente documental para investigar al dinosaurio Ankylosaurus mediante inteligencia artificial y RAG."
+  >
+
+  <title>Archivo TIC IA | Investigación del Ankylosaurus</title>
+
+  <link
+    rel="stylesheet"
+    href="./assets/css/styles.css?v=20261019-1"
+  >
 </head>
 
 <body class="research-app">
 
-  <!-- ENCABEZADO HORIZONTAL -->
+  <!-- ==========================================
+       ENCABEZADO HORIZONTAL
+  =========================================== -->
+
   <header class="global-header">
-    <a class="header-brand" href="#inicio" aria-label="Archivo TIC IA, ir al inicio">
+
+    <a
+      class="header-brand"
+      href="#inicio"
+      aria-label="Archivo TIC IA, ir al inicio"
+    >
+
       <span class="brand-icon" aria-hidden="true">✳</span>
+
       <span class="brand-text">
         <strong>Archivo TIC <span>IA</span></strong>
-        <small>Centro de investigación</small>
+        <small>Centro de investigación paleontológica</small>
       </span>
+
     </a>
 
     <nav class="header-nav" aria-label="Navegación principal">
-      <a class="nav-link active" href="#investigacion">Mi espacio</a>
-      <a class="nav-link" href="#biblioteca">Biblioteca</a>
+      <a class="nav-link active" href="#investigacion">
+        Mi espacio
+      </a>
+
+      <a class="nav-link" href="#biblioteca">
+        Biblioteca
+      </a>
     </nav>
 
     <div class="header-right">
-      <div id="health" class="connection-status" role="status" aria-live="polite">
-        <span class="connection-dot" aria-hidden="true"></span>
-        <span id="health-label">Comprobando conexión...</span>
+
+      <div
+        id="health"
+        class="connection-status"
+        role="status"
+        aria-live="polite"
+      >
+        <span
+          class="connection-dot"
+          aria-hidden="true"
+        ></span>
+
+        <span id="health-label">
+          Comprobando conexión...
+        </span>
       </div>
 
-      <button id="new-chat" class="new-session-button" type="button">
+      <button
+        id="new-chat"
+        class="new-session-button"
+        type="button"
+      >
         <span aria-hidden="true">＋</span>
         Nueva conversación
       </button>
+
     </div>
+
   </header>
+
+
+  <!-- ==========================================
+       CONTENEDOR PRINCIPAL
+  =========================================== -->
 
   <div class="page-container" id="inicio">
 
     <!-- BIENVENIDA -->
-    <section class="intro-section" aria-labelledby="intro-title">
+
+    <section
+      class="intro-section"
+      aria-labelledby="intro-title"
+    >
 
       <div class="intro-copy">
+
         <span class="eyebrow">
-          TU ESPACIO DE ESTUDIO E INVESTIGACIÓN
+          EXPLORA EL MUNDO DE LOS DINOSAURIOS
         </span>
 
         <h1 id="intro-title">
-          Tus documentos, <em>nuevas ideas.</em>
+          Descubre al <em>Ankylosaurus.</em>
         </h1>
 
         <p>
-          Consulta tus archivos, encuentra fuentes y contrasta
-          respuestas en un solo espacio.
+          Investiga su anatomía, alimentación, hábitat,
+          mecanismos de defensa y descubrimientos fósiles
+          mediante documentos científicos.
         </p>
+
       </div>
 
-      <!-- INDICADORES -->
-      <div class="activity-strip" aria-label="Estado de esta sesión">
+
+      <!-- INDICADORES DE ACTIVIDAD -->
+
+      <div
+        class="activity-strip"
+        aria-label="Estado de esta sesión"
+      >
 
         <div class="activity-item">
-          <span class="activity-label">Documentos</span>
+          <span class="activity-label">
+            Documentos
+          </span>
+
           <strong id="stat-documents">0</strong>
         </div>
 
         <div class="activity-item">
-          <span class="activity-label">Modo de consulta</span>
-          <strong id="stat-mode">RAG activado</strong>
+          <span class="activity-label">
+            Modo de consulta
+          </span>
+
+          <strong id="stat-mode">
+            RAG activado
+          </strong>
         </div>
 
         <div class="activity-item">
-          <span class="activity-label">Preguntas realizadas</span>
+          <span class="activity-label">
+            Preguntas realizadas
+          </span>
+
           <strong id="stat-queries">0</strong>
         </div>
 
       </div>
+
     </section>
 
-    <!-- ESTRUCTURA PRINCIPAL -->
+
+    <!-- ==========================================
+         ESTRUCTURA PRINCIPAL
+    =========================================== -->
+
     <div class="research-layout">
 
-      <main class="research-main" id="investigacion">
+      <main
+        class="research-main"
+        id="investigacion"
+      >
 
-        <!-- SECCIÓN DE PREGUNTAS -->
-        <section class="question-workspace" aria-labelledby="question-title">
+        <!-- ======================================
+             PANEL DE INVESTIGACIÓN
+        ======================================= -->
+
+        <section
+          class="question-workspace"
+          aria-labelledby="question-title"
+        >
 
           <div class="section-title-row">
 
             <div>
-              <span class="section-overline">01 / EMPEZAR</span>
-              <h2 id="question-title">¿Qué quieres investigar?</h2>
+
+              <span class="section-overline">
+                01 / EMPEZAR
+              </span>
+
+              <h2 id="question-title">
+                ¿Qué quieres investigar?
+              </h2>
+
               <p>
-                Escribe una pregunta o utiliza una sugerencia
-                de la bitácora.
+                Realiza preguntas sobre el Ankylosaurus
+                o utiliza una sugerencia de la bitácora.
               </p>
+
             </div>
 
-            <span id="mode-tag" class="mode-tag">
+            <span
+              id="mode-tag"
+              class="mode-tag"
+            >
               ● File Search activo
             </span>
 
           </div>
 
-          <!-- NUEVA NOTA DE INVESTIGACIÓN -->
+
+          <!-- ====================================
+               NOTA DE SUGERENCIAS
+          ===================================== -->
+
           <aside
             class="research-suggestion-note"
-            aria-label="Sugerencias sobre los documentos"
+            aria-label="Sugerencias de investigación sobre el Ankylosaurus"
           >
+
             <strong>
-              ✦ ¿Qué puedes investigar?
+              ✦ ¿Qué puedes investigar sobre el Ankylosaurus?
             </strong>
 
             <p>
-              Pregunta sobre conceptos y herramientas de inteligencia
-              artificial, su aplicación en la educación, o sus ventajas
-              y desafíos. También puedes solicitar resúmenes y
-              comparaciones entre los documentos. Activa RAG para
-              consultar tus fuentes.
+              Descubre cómo vivía este dinosaurio acorazado,
+              qué comía, dónde habitaba y cuáles eran sus
+              principales mecanismos de defensa.
+
+              También puedes investigar sus fósiles,
+              sus posibles depredadores, su comportamiento
+              y la extinción de los dinosaurios no avianos.
+
+              Activa RAG para obtener respuestas respaldadas
+              por los documentos de nuestra biblioteca.
             </p>
+
           </aside>
 
-          <!-- FORMULARIO -->
-          <form id="ask-form" class="research-form">
 
-            <label class="visually-hidden" for="question">
+          <!-- ====================================
+               FORMULARIO DE CONSULTAS
+          ===================================== -->
+
+          <form
+            id="ask-form"
+            class="research-form"
+          >
+
+            <label
+              class="visually-hidden"
+              for="question"
+            >
               Escribe tu pregunta
             </label>
 
@@ -137,15 +255,22 @@
               rows="3"
               minlength="3"
               maxlength="3000"
-              placeholder="Ejemplo: ¿Qué conceptos principales aparecen en mis documentos?"
+              placeholder="Ejemplo: ¿Cómo se defendía el Ankylosaurus de sus depredadores?"
               required
             ></textarea>
+
+
+            <!-- CONTROLES DE CONSULTA -->
 
             <div class="question-toolbar">
 
               <div class="search-controls">
 
-                <label class="rag-control" for="use-search">
+                <label
+                  class="rag-control"
+                  for="use-search"
+                >
+
                   <input
                     id="use-search"
                     type="checkbox"
@@ -156,13 +281,20 @@
                   <span>
                     Usar mis documentos (RAG)
                   </span>
+
                 </label>
 
-                <span id="mode-note" class="mode-explanation">
+                <span
+                  id="mode-note"
+                  class="mode-explanation"
+                >
                   Búsqueda documental habilitada
                 </span>
 
               </div>
+
+
+              <!-- BOTONES -->
 
               <div class="question-buttons">
 
@@ -186,7 +318,11 @@
                 </button>
 
               </div>
+
             </div>
+
+
+            <!-- CONSEJOS -->
 
             <div class="form-footnote">
 
@@ -195,30 +331,46 @@
                 Comparar realiza dos solicitudes.
               </span>
 
-              <span id="char-count">0 / 3000</span>
+              <span id="char-count">
+                0 / 3000
+              </span>
 
             </div>
 
           </form>
+
         </section>
 
-        <!-- BITÁCORA -->
-        <section class="research-log" aria-labelledby="log-title">
+
+        <!-- ======================================
+             BITÁCORA DE INVESTIGACIÓN
+        ======================================= -->
+
+        <section
+          class="research-log"
+          aria-labelledby="log-title"
+        >
 
           <div class="log-header">
 
             <div>
-              <span class="section-overline">02 / REVISAR</span>
+
+              <span class="section-overline">
+                02 / REVISAR
+              </span>
 
               <h2 id="log-title">
                 Bitácora de investigación
               </h2>
 
               <p>
-                Respuestas, comparaciones y referencias
+                Respuestas sobre el Ankylosaurus,
+                comparaciones y fuentes documentales
                 de tu sesión actual.
               </p>
+
             </div>
+
 
             <button
               id="export-chat"
@@ -232,6 +384,9 @@
 
           </div>
 
+
+          <!-- NOTIFICACIONES -->
+
           <div
             id="message"
             class="notification"
@@ -239,6 +394,9 @@
             aria-live="polite"
             hidden
           ></div>
+
+
+          <!-- CONVERSACIÓN -->
 
           <div
             id="conversation"
@@ -248,15 +406,21 @@
           >
 
             <!-- RESPALDO DE COMPATIBILIDAD -->
+
             <div class="legacy-response">
 
-              <h3>Respuesta del asistente</h3>
+              <h3>
+                Respuesta del asistente
+              </h3>
 
               <div id="answer">
-                Escribe una pregunta para comenzar.
+                Escribe una pregunta sobre el Ankylosaurus
+                para comenzar.
               </div>
 
-              <h4>Fuentes documentales</h4>
+              <h4>
+                Fuentes documentales
+              </h4>
 
               <ul id="sources"></ul>
 
@@ -268,7 +432,11 @@
 
       </main>
 
-      <!-- BIBLIOTECA DOCUMENTAL -->
+
+      <!-- ======================================
+           BIBLIOTECA DOCUMENTAL
+      ======================================= -->
+
       <aside
         class="library-panel"
         id="biblioteca"
@@ -298,10 +466,14 @@
           </div>
 
           <p>
-            Archivos disponibles para tus investigaciones.
+            Biblioteca paleontológica dedicada
+            al Ankylosaurus.
           </p>
 
         </div>
+
+
+        <!-- BUSCADOR Y FILTROS -->
 
         <div class="library-tools">
 
@@ -313,7 +485,7 @@
             id="doc-search"
             class="library-search"
             type="search"
-            placeholder="Nombre del archivo..."
+            placeholder="Nombre del documento..."
             autocomplete="off"
           >
 
@@ -321,7 +493,10 @@
             Tipo de documento
           </label>
 
-          <select id="doc-type" class="library-type">
+          <select
+            id="doc-type"
+            class="library-type"
+          >
 
             <option value="all">
               Todos los formatos
@@ -343,6 +518,9 @@
 
         </div>
 
+
+        <!-- LISTADO DOCUMENTAL -->
+
         <div
           id="documents"
           class="document-list library-results"
@@ -355,9 +533,15 @@
 
         </div>
 
+
+        <!-- ÍNDICE Y SINCRONIZACIÓN -->
+
         <div class="library-bottom">
 
-          <div class="index-info" role="status">
+          <div
+            class="index-info"
+            role="status"
+          >
 
             <span
               id="index-dot"
@@ -371,6 +555,7 @@
 
           </div>
 
+
           <div class="library-buttons">
 
             <button
@@ -378,14 +563,20 @@
               class="sync-button"
               type="button"
             >
-              <span id="sync-symbol" aria-hidden="true">
+
+              <span
+                id="sync-symbol"
+                aria-hidden="true"
+              >
                 ↻
               </span>
 
               <span id="sync-label">
                 Sincronizar Drive
               </span>
+
             </button>
+
 
             <button
               id="refresh-docs"
@@ -399,9 +590,11 @@
 
           </div>
 
+
           <p class="sidebar-hint">
-            La sincronización de Google Drive está disponible
-            cuando trabajas en el servidor local.
+            La sincronización de los documentos
+            paleontológicos de Google Drive está
+            disponible desde el servidor local.
           </p>
 
         </div>
@@ -410,7 +603,11 @@
 
     </div>
 
-    <!-- NUEVO FOOTER ACADÉMICO -->
+
+    <!-- ==========================================
+         FOOTER ACADÉMICO
+    =========================================== -->
+
     <footer class="workspace-footer">
 
       <div class="footer-credits">
@@ -432,19 +629,27 @@
       <span class="footer-description">
         Archivo TIC IA · Proyecto académico
         <br>
-        Investigación asistida con inteligencia artificial
+        Investigación paleontológica asistida
+        con inteligencia artificial
       </span>
 
     </footer>
 
   </div>
 
-  <!-- PREGUNTAS SUGERIDAS -->
+
+  <!-- ==========================================
+       PREGUNTAS SUGERIDAS SOBRE ANKYLOSAURUS
+  =========================================== -->
+
   <template id="empty-state-template">
 
     <div class="empty-state notebook-welcome">
 
-      <div class="welcome-symbol" aria-hidden="true">
+      <div
+        class="welcome-symbol"
+        aria-hidden="true"
+      >
         ✳
       </div>
 
@@ -453,60 +658,70 @@
       </span>
 
       <h3>
-        Una buena pregunta es el comienzo.
+        Descubre los secretos del Ankylosaurus.
       </h3>
 
       <p>
-        Elige una de estas ideas o escribe tu propia consulta arriba.
+        Explora cómo era este dinosaurio del Cretácico
+        tardío, consulta su historia o elige una de estas
+        preguntas para comenzar tu investigación.
       </p>
+
+
+      <!-- TARJETAS DE PREGUNTAS -->
 
       <div class="suggestion-grid">
 
-        <!-- SUGERENCIA 1 -->
+        <!-- PREGUNTA 1 -->
+
         <button
           type="button"
           class="suggestion"
-          data-prompt="Según mis documentos, ¿qué es la inteligencia artificial y cuáles son sus conceptos principales?"
+          data-prompt="¿Qué es el Ankylosaurus, cuándo vivió y cuáles eran sus principales características?"
         >
 
           <span aria-hidden="true">01</span>
 
           <span>
-            Conceptos fundamentales de IA
+            Conoce al Ankylosaurus
           </span>
 
           <span aria-hidden="true">↗</span>
 
         </button>
 
-        <!-- SUGERENCIA 2 -->
+
+        <!-- PREGUNTA 2 -->
+
         <button
           type="button"
           class="suggestion"
-          data-prompt="¿Qué herramientas de inteligencia artificial se describen en mis documentos y para qué sirven?"
+          data-prompt="¿Cómo funcionaban la armadura y la maza de la cola del Ankylosaurus para defenderse de posibles depredadores?"
         >
 
           <span aria-hidden="true">02</span>
 
           <span>
-            Herramientas de inteligencia artificial
+            Su armadura y mecanismos de defensa
           </span>
 
           <span aria-hidden="true">↗</span>
 
         </button>
 
-        <!-- SUGERENCIA 3 -->
+
+        <!-- PREGUNTA 3 -->
+
         <button
           type="button"
           class="suggestion"
-          data-prompt="¿Qué aplicaciones educativas, ventajas y desafíos de la inteligencia artificial aparecen en mis documentos?"
+          data-prompt="¿De qué se alimentaba el Ankylosaurus y cómo era el hábitat en el que vivía?"
         >
 
           <span aria-hidden="true">03</span>
 
           <span>
-            Educación, ventajas y desafíos
+            Alimentación y hábitat
           </span>
 
           <span aria-hidden="true">↗</span>
@@ -519,7 +734,11 @@
 
   </template>
 
-  <!-- EVITAR RECARGA DEL FORMULARIO -->
+
+  <!-- ==========================================
+       EVITAR RECARGA DEL FORMULARIO
+  =========================================== -->
+
   <script>
     document
       .getElementById("ask-form")
@@ -528,10 +747,14 @@
       });
   </script>
 
-  <!-- ARCHIVO PRINCIPAL DE JAVASCRIPT -->
+
+  <!-- ==========================================
+       JAVASCRIPT PRINCIPAL
+  =========================================== -->
+
   <script
     type="module"
-    src="./assets/js/app.js?v=20261016-2"
+    src="./assets/js/app.js?v=20261019-1"
   ></script>
 
 </body>

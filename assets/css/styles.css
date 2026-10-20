@@ -1683,3 +1683,744 @@ a.doc-link:hover {
   }
 
 }
+
+/* =====================================================
+   ARCHIVO TIC IA
+   PALETA MUSEO PALEONTOLÓGICO
+
+   Temática: Ankylosaurus
+   Verde profundo · Verde salvia · Bronce · Arena · Marfil
+
+   IMPORTANTE:
+   Este bloque modifica únicamente colores.
+   No cambia tamaños, espacios, distribución
+   ni funcionalidades del proyecto.
+   ===================================================== */
+
+
+/* =====================================================
+   1. VARIABLES GENERALES
+   ===================================================== */
+
+:root {
+
+  /* Textos */
+  --ink: #303A32;
+  --ink-soft: #657064;
+
+  /* Verdes principales */
+  --plum: #343B35;
+  --plum-deep: #29322B;
+  --plum-mid: #536453;
+
+  /* Bronce */
+  --wine: #90643B;
+  --wine-hover: #704D2D;
+  --rose: #B68A58;
+
+  /* Fondos */
+  --lavender: #ECEEE6;
+  --lavender-dark: #DCE2D6;
+
+  --paper: #FFFFFF;
+  --canvas: #F8F5ED;
+
+  /* Bordes */
+  --border: #E1E3D9;
+
+  /* Colores adicionales */
+  --museum-green: #343B35;
+  --museum-sage: #6E7864;
+  --museum-bronze: #B68A58;
+  --museum-sand: #DDD0B8;
+  --museum-ivory: #F8F5ED;
+
+  /* Sombras */
+  --shadow: 0 15px 48px rgba(43, 54, 43, .065);
+
+}
+
+
+/* =====================================================
+   2. FONDO GENERAL
+   ===================================================== */
+
+body {
+  background-color: var(--museum-ivory);
+  color: var(--ink);
+}
+
+
+/* =====================================================
+   3. ENCABEZADO PRINCIPAL
+   ===================================================== */
+
+.global-header {
+  background-color: #FFFEFA;
+  border-color: var(--border);
+}
+
+.brand-icon {
+  background-color: var(--museum-green);
+  color: #E8CEAA;
+}
+
+.brand-text strong {
+  color: var(--plum-deep);
+}
+
+.brand-text strong span {
+  color: var(--wine);
+}
+
+.brand-text small {
+  color: #718070;
+}
+
+
+/* Navegación */
+
+.nav-link {
+  color: #687369;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background-color: #E9EDE3;
+  color: #485C49;
+}
+
+
+/* Indicador del servidor */
+
+.connection-status,
+.health-pill {
+  background-color: #F0F2EA;
+  color: #647167;
+}
+
+
+/* Nueva conversación */
+
+.new-session-button {
+  background-color: var(--museum-green);
+  border-color: var(--museum-green);
+  color: #FFFFFF;
+  box-shadow: 0 6px 16px rgba(43, 54, 43, .14);
+}
+
+.new-session-button:hover {
+  background-color: var(--plum-mid);
+}
+
+
+/* =====================================================
+   4. BIENVENIDA PRINCIPAL
+   ===================================================== */
+
+.eyebrow,
+.section-overline,
+.welcome-label {
+  color: var(--wine);
+}
+
+.intro-copy h1 {
+  color: var(--plum-deep);
+}
+
+.intro-copy h1 em {
+  color: var(--museum-sage);
+}
+
+.intro-copy p {
+  color: var(--ink-soft);
+}
+
+
+/* =====================================================
+   5. INDICADORES DE ACTIVIDAD
+   ===================================================== */
+
+.activity-strip {
+  background-color: var(--museum-green);
+  border-color: #4B594C;
+  box-shadow: 0 7px 25px rgba(43, 54, 43, .13);
+}
+
+.activity-label {
+  color: #C9D4C6;
+}
+
+.activity-item strong {
+  color: #FFFFFF;
+}
+
+
+/* =====================================================
+   6. PANEL PRINCIPAL DE PREGUNTAS
+   ===================================================== */
+
+.question-workspace {
+  background-color: var(--museum-green);
+  color: #FFFFFF;
+  box-shadow: 0 16px 45px rgba(43, 54, 43, .14);
+}
+
+.question-workspace::before {
+  border-color: rgba(221, 208, 184, .08);
+}
+
+.question-workspace .section-overline {
+  color: #D8BE98;
+}
+
+.question-workspace .section-title-row p {
+  color: #D3DED1;
+}
+
+
+/* Estado File Search */
+
+.mode-tag {
+  background-color: rgba(221, 208, 184, .12);
+  border-color: rgba(221, 208, 184, .22);
+  color: #F1E3CB;
+}
+
+.mode-tag.off {
+  color: #CBD1C5;
+}
+
+
+/* =====================================================
+   7. NOTA DE INVESTIGACIÓN
+   ===================================================== */
+
+.research-suggestion-note {
+  background-color: rgba(221, 208, 184, .10);
+  border-color: rgba(221, 208, 184, .24);
+}
+
+.research-suggestion-note strong {
+  color: #ECD3AB;
+}
+
+.research-suggestion-note p {
+  color: #E1E7DC;
+}
+
+
+/* =====================================================
+   8. CAMPO PARA PREGUNTAS
+   ===================================================== */
+
+.question-input {
+  background-color: #FFFEFB;
+  color: var(--ink);
+  border-color: #DDE1D7;
+}
+
+.question-input::placeholder {
+  color: #929A8D;
+}
+
+.question-input:focus {
+  border-color: var(--museum-bronze);
+  box-shadow: 0 0 0 4px rgba(182, 138, 88, .17);
+}
+
+
+/* =====================================================
+   9. CONTROL RAG
+   ===================================================== */
+
+.rag-control {
+  color: #FFFFFF;
+}
+
+.rag-control input {
+  background-color: #829083;
+}
+
+.rag-control input:checked {
+  background-color: var(--museum-bronze);
+}
+
+.mode-explanation {
+  color: #D0D9CA;
+}
+
+
+/* =====================================================
+   10. BOTONES DE CONSULTA
+   ===================================================== */
+
+/* Comparar respuestas */
+
+.compare-button {
+  color: #FFFFFF;
+  background-color: transparent;
+  border-color: #839180;
+}
+
+.compare-button:hover:not(:disabled) {
+  background-color: #4F6051;
+  border-color: #ACBAA4;
+}
+
+
+/* Consultar */
+
+.send-button {
+  color: var(--museum-green);
+  background-color: #F5E8D3;
+  border-color: #F5E8D3;
+}
+
+.send-button:hover:not(:disabled) {
+  background-color: #E6D1AE;
+  border-color: #E6D1AE;
+}
+
+
+/* Consejos */
+
+.form-footnote {
+  color: #C7D1C2;
+}
+
+
+/* =====================================================
+   11. BITÁCORA DE INVESTIGACIÓN
+   ===================================================== */
+
+.research-log {
+  background-color: #FFFFFF;
+  border-color: var(--border);
+}
+
+.log-header {
+  border-color: var(--border);
+}
+
+.log-header h2 {
+  color: var(--plum-deep);
+}
+
+.log-header p {
+  color: var(--ink-soft);
+}
+
+.export-button {
+  background-color: #FFFEFA;
+  color: var(--wine-hover);
+  border-color: var(--border);
+}
+
+.export-button:hover:not(:disabled) {
+  background-color: #F5F0E6;
+  border-color: #C8B693;
+}
+
+.research-thread {
+  background: linear-gradient(
+    90deg,
+    #F4F3EA 0 5px,
+    transparent 5px 100%
+  );
+}
+
+
+/* =====================================================
+   12. PANTALLA DE BIENVENIDA
+   ===================================================== */
+
+.welcome-symbol {
+  background-color: #E6E7D9;
+  color: var(--wine);
+}
+
+.empty-state h3 {
+  color: var(--plum-deep);
+}
+
+.empty-state p {
+  color: var(--ink-soft);
+}
+
+
+/* =====================================================
+   13. TARJETAS DE PREGUNTAS SUGERIDAS
+   ===================================================== */
+
+.suggestion {
+  background-color: #FAF9F3;
+  color: var(--plum-deep);
+  border-color: #DEE1D3;
+}
+
+.suggestion span:first-child {
+  color: var(--wine);
+}
+
+.suggestion span:last-child {
+  color: var(--wine);
+}
+
+.suggestion:hover {
+  border-color: var(--museum-bronze);
+  box-shadow: 0 7px 16px rgba(52, 59, 53, .09);
+}
+
+
+/* =====================================================
+   14. MENSAJES DE CONVERSACIÓN
+   ===================================================== */
+
+.message-avatar {
+  background-color: #E5E9DC;
+  color: #556C55;
+}
+
+.chat-message.user .message-avatar {
+  background-color: var(--museum-green);
+  color: #FFFFFF;
+}
+
+.message-name {
+  color: #7C8A79;
+}
+
+.message-bubble {
+  background-color: #F4F5EE;
+  border-color: #DFE3D8;
+  color: var(--ink);
+}
+
+.chat-message.user .message-bubble {
+  background-color: #526552;
+  border-color: #526552;
+  color: #FFFFFF;
+}
+
+
+/* =====================================================
+   15. BOTÓN DE COPIAR RESPUESTA
+   ===================================================== */
+
+.message-action {
+  background-color: #FFFEFA;
+  color: var(--wine-hover);
+  border-color: var(--border);
+}
+
+.message-action:hover {
+  background-color: #F2EEE3;
+}
+
+
+/* =====================================================
+   16. FUENTES DOCUMENTALES
+   ===================================================== */
+
+.sources-block {
+  background-color: #FCFBF6;
+  border-color: #CFC8B4;
+}
+
+.sources-title {
+  color: #5E715C;
+}
+
+.source-link,
+.source-text {
+  background-color: #E9E9DC;
+  color: #58694F;
+}
+
+.source-link:hover {
+  background-color: #DDE3D1;
+}
+
+
+/* =====================================================
+   17. COMPARADOR RAG VS SIN RAG
+   ===================================================== */
+
+.comparison-result {
+  background-color: #FFFFFF;
+  border-color: var(--border);
+}
+
+.comparison-heading strong {
+  color: var(--plum-deep);
+}
+
+.comparison-heading p {
+  color: var(--ink-soft);
+}
+
+.comparison-card {
+  border-color: #DDE2D8;
+}
+
+.comparison-card.rag {
+  border-color: #AAB899;
+}
+
+.comparison-card-header {
+  background-color: #F1F2E9;
+}
+
+.comparison-card.rag .comparison-card-header {
+  background-color: #E5ECDD;
+}
+
+.comparison-card-header strong {
+  color: var(--plum-deep);
+}
+
+.comparison-card-header span {
+  color: var(--ink-soft);
+}
+
+.comparison-metrics {
+  border-color: var(--border);
+}
+
+.comparison-metrics thead {
+  background-color: #EEF1E8;
+}
+
+.comparison-metrics tbody tr:nth-child(even) {
+  background-color: #F9F9F3;
+}
+
+.comparison-note {
+  color: var(--ink-soft);
+}
+
+
+/* =====================================================
+   18. BIBLIOTECA DOCUMENTAL
+   ===================================================== */
+
+.library-panel {
+  background-color: #FFFFFF;
+  border-color: var(--border);
+}
+
+.library-head {
+  background-color: #FFFFFF;
+  border-color: var(--border);
+}
+
+.library-head h2 {
+  color: var(--plum-deep);
+}
+
+.library-head p {
+  color: var(--ink-soft);
+}
+
+
+/* Contador de documentos */
+
+.count-badge {
+  background-color: #EEE9DB;
+  color: var(--wine-hover);
+}
+
+
+/* Buscador y filtros */
+
+.library-tools label {
+  color: #697867;
+}
+
+.library-search,
+.library-type {
+  background-color: #F8F8F2;
+  color: var(--ink);
+  border-color: #DEE2D8;
+}
+
+.library-search::placeholder {
+  color: #939D90;
+}
+
+.library-search:focus,
+.library-type:focus {
+  background-color: #FFFFFF;
+  outline-color: var(--museum-bronze);
+}
+
+
+/* Documentos */
+
+.doc-item {
+  border-color: #E7E9E0;
+}
+
+.doc-link {
+  color: var(--ink);
+}
+
+a.doc-link:hover {
+  color: var(--wine);
+}
+
+.doc-meta {
+  color: #879384;
+}
+
+
+/* =====================================================
+   19. ICONOS DE ARCHIVOS
+   ===================================================== */
+
+/* PDF */
+
+.doc-icon.pdf {
+  background-color: #F2E7DE;
+  color: #966046;
+}
+
+/* TXT */
+
+.doc-icon.txt {
+  background-color: #E6ECE9;
+  color: #526E70;
+}
+
+/* Google Docs */
+
+.doc-icon.docs {
+  background-color: #E5EADC;
+  color: #5C7757;
+}
+
+/* Otros formatos */
+
+.doc-icon {
+  background-color: #ECE9DD;
+  color: #786647;
+}
+
+
+/* =====================================================
+   20. PARTE INFERIOR DE LA BIBLIOTECA
+   ===================================================== */
+
+.library-bottom {
+  background-color: #F6F5EC;
+  border-color: var(--border);
+}
+
+.index-info {
+  color: #697867;
+}
+
+
+/* Sincronizar Drive */
+
+.sync-button {
+  background-color: #E9E4D5;
+  border-color: #D8D0BC;
+  color: #6C5537;
+}
+
+.sync-button:hover:not(:disabled) {
+  background-color: #DDD3BC;
+}
+
+
+/* Actualizar biblioteca */
+
+.refresh-button {
+  background-color: #FFFEFA;
+  color: var(--museum-green);
+  border-color: var(--border);
+}
+
+.refresh-button:hover:not(:disabled) {
+  background-color: #ECEEE4;
+}
+
+
+/* Texto de ayuda */
+
+.sidebar-hint {
+  color: #849082;
+}
+
+
+/* =====================================================
+   21. NOTIFICACIONES
+   ===================================================== */
+
+.notification {
+  background-color: #F6F3E9;
+  color: var(--plum-deep);
+  border-color: #E2DCCB;
+}
+
+/* Los estados de éxito y error conservan
+   sus colores semánticos para facilitar
+   la identificación de mensajes. */
+
+
+/* =====================================================
+   22. FOOTER ACADÉMICO
+   ===================================================== */
+
+.workspace-footer {
+  color: #7D897A;
+}
+
+.footer-credits strong {
+  color: var(--plum-deep);
+}
+
+.footer-credits p {
+  color: #7D897A;
+}
+
+.footer-description {
+  color: #879183;
+}
+
+
+/* =====================================================
+   23. ELEMENTOS COMPLEMENTARIOS
+   ===================================================== */
+
+.documents-placeholder,
+.docs-placeholder {
+  background-color: #FAF9F3;
+  border-color: #D6DACD;
+  color: #73836E;
+}
+
+.legacy-response {
+  background-color: #FFFFFF;
+  border-left-color: var(--museum-bronze);
+  border-color: var(--border);
+}
+
+.legacy-response h4 {
+  color: var(--wine);
+}
+
+#answer {
+  color: #566356;
+}
+
+#sources a {
+  color: var(--wine);
+}
+
+
+/* =====================================================
+   FIN - PALETA MUSEO PALEONTOLÓGICO
+   ===================================================== */

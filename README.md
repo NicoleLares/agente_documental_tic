@@ -1,95 +1,211 @@
 
-# 2.3 Agente documental con Google Drive — Archivo TIC IA
+# 🦖 Archivo TIC IA — Agente Documental del Ankylosaurus
 
-**Tecnologico Nacional de Mexico - ITP**  
+### Práctica 2.3 — Inteligencia Artificial Aplicada a las TIC
+
+**Tecnológico Nacional de México - ITP**  
 **Desarrollado por:** Nicole Dayana Esparza Lares  
-**No. Control:** 22200208
+**No. de Control:** 22200208
 
-Proyecto académico de **Inteligencia artificial aplicada a las TIC**, Tecnológico Nacional de México, campus Pachuca.
+---
 
-Continuación de **2.2 Agente investigador**: se reemplaza la búsqueda pública Web Search por recuperación documental de **Google Drive**, **OpenAI Vector Stores** y **File Search (RAG)**.
+## 📖 Descripción del proyecto
 
-## Propósito pedagógico
+**Archivo TIC IA** es una aplicación web que funciona como un agente documental inteligente especializado en la investigación del dinosaurio **Ankylosaurus magniventris**.
 
-El alumno comprenderá que una organización necesita consultar documentos propios y autorizados, no solamente Internet.
+El sistema permite consultar documentos almacenados en Google Drive y generar respuestas utilizando inteligencia artificial mediante OpenAI y la técnica de Recuperación Aumentada por Generación (RAG).
 
-Identificará el papel de OAuth, Google Drive API, sincronización, indexación semántica, recuperación de contexto, respuestas sustentadas y trazabilidad mediante fuentes.
+A través de una interfaz moderna, el usuario puede realizar preguntas sobre la anatomía, alimentación, hábitat, mecanismos de defensa, comportamiento, descubrimientos fósiles y extinción del Ankylosaurus.
 
-Comparará respuestas **sin** y **con** acceso documental, observará qué sucede al modificar una fuente y realizará las pruebas iniciales en **localhost**.
+Las respuestas obtenidas mediante RAG pueden incluir referencias a los documentos consultados, facilitando la verificación de la información.
 
-El despliegue académico se realizó con **GitHub Pages** para el frontend y **Vercel** para FastAPI.
+---
 
-Esto no implica que el sistema esté listo para uso público sin restricciones: antes de su uso abierto se requiere controlar el acceso y los costos.
+## 🎯 Objetivo general
 
-## Arquitectura
+Desarrollar un agente documental inteligente que integre Google Drive API, OAuth 2.0, FastAPI y OpenAI para facilitar la consulta, recuperación y análisis de información paleontológica relacionada con el Ankylosaurus mediante la tecnología RAG.
 
-- `app/main.py`: FastAPI, endpoints REST, frontend estático y protección local de sincronización.
-- `app/core/config.py`: configuración y secretos cargados desde `.env`.
-- `app/models/documento.py`: modelos de solicitud y respuesta.
-- `app/services/drive_service.py`: OAuth Desktop, listado limitado a una carpeta y descarga/exportación de archivos.
-- `app/services/sync_service.py`: Vector Store, manifiesto de archivos, altas, cambios y bajas.
-- `app/services/agent_service.py`: Responses API + File Search y fuentes verificadas por anotaciones de archivo.
-- `index.html` y `assets/`: interfaz HTML, CSS y JavaScript (estilo vino, ciruela y lavanda).
-- `iniciar_local.py`: arranque local de Uvicorn sin conflictos de nombres.
-- `index.py`: punto de entrada del backend en Vercel.
-- `scripts/export_vercel_vars.py`: prepara variables para utilizar en Vercel el índice creado localmente.
-- `data/manifest.json`: estado local del índice (no se publica).
+## 🛠️ Tecnologías utilizadas
 
-## 1. Requisitos
+| Tecnología | Función |
+|---|---|
+| Python | Desarrollo del backend |
+| FastAPI | Creación de la API REST |
+| HTML5 | Estructura de la interfaz |
+| CSS3 | Diseño visual y estilos |
+| JavaScript | Interactividad y conexión con la API |
+| Google Drive API | Acceso a los documentos |
+| Google OAuth 2.0 | Autenticación y autorización |
+| OpenAI API | Generación de respuestas |
+| Vector Stores | Almacenamiento e indexación documental |
+| File Search (RAG) | Recuperación de información |
+| GitHub | Control de versiones |
+| GitHub Pages | Publicación del frontend |
+| Vercel | Despliegue del backend |
 
-- Python 3.11 o superior.
-- Visual Studio Code.
-- Git y GitHub.
-- Cuenta de Google Cloud.
-- Google Drive API habilitada.
-- Credenciales OAuth 2.0.
-- Cuenta de OpenAI Platform con acceso a la API.
-- Navegador web.
-- Documentos académicos autorizados.
+---
 
-**Importante:** las claves privadas y los archivos de Google Drive no deben publicarse en GitHub.
+## ⚙️ Funcionalidades principales
 
-## 2. Configuración Google Drive
+La aplicación permite:
 
-1. En [Google Cloud Console](https://console.cloud.google.com/), crea un proyecto y habilita **Google Drive API**.
-2. Configura **Google Auth Platform**, la pantalla de consentimiento y los usuarios de prueba si corresponde.
-3. Crea credenciales OAuth 2.0 de tipo **Desktop app** y descarga el archivo en la raíz del proyecto como `credentials.json`.
-4. Crea una carpeta de Google Drive con al menos cinco documentos autorizados.
-5. Los formatos admitidos son PDF, TXT y Google Docs nativos.
-6. Extrae el identificador de la carpeta desde la URL `/folders/ID`.
-7. Registra el identificador en la variable `GOOGLE_DRIVE_FOLDER_ID`.
+- Conectar Google Drive mediante OAuth 2.0.
+- Sincronizar documentos autorizados.
+- Indexar archivos PDF, TXT y Google Docs.
+- Consultar información mediante inteligencia artificial.
+- Activar y desactivar el modo RAG.
+- Comparar respuestas con y sin File Search.
+- Mostrar las fuentes utilizadas en las respuestas.
+- Buscar documentos por nombre.
+- Filtrar documentos por formato.
+- Actualizar la biblioteca documental.
+- Crear nuevas conversaciones.
+- Copiar respuestas.
+- Exportar conversaciones a archivos TXT.
+- Consultar el estado del servidor.
+- Visualizar la cantidad de documentos indexados.
 
-Este ejercicio utiliza el alcance `drive.readonly` para lectura.
+La sincronización de Google Drive se realiza únicamente desde localhost.
 
-Se recomienda utilizar documentos académicos de prueba sin datos personales.
+---
 
-## 3. Preparar proyecto en Windows (PowerShell)
+## 🦕 Biblioteca documental del Ankylosaurus
 
-Crear entorno virtual:
+El proyecto utiliza cinco documentos almacenados en una carpeta autorizada de Google Drive.
 
-```powershell
-py -m venv .venv
+| Documento | Formato | Contenido |
+|---|---|---|
+| Introduccion_Ankylosaurus.pdf | PDF | Historia, descubrimiento y características |
+| Anatomia_y_Defensas.pdf | PDF | Armadura, osteodermos y maza caudal |
+| Alimentacion_y_Habitat.txt | TXT | Alimentación herbívora y ecosistemas |
+| Comportamiento_y_Depredadores | Google Docs | Comportamiento y posibles depredadores |
+| Fosiles_y_Extincion | Google Docs | Registro fósil y extinción |
+
+Los cinco documentos fueron sincronizados correctamente mediante Google Drive API e indexados utilizando OpenAI Vector Stores.
+
+La biblioteca permite recuperar información relevante y generar respuestas respaldadas por fuentes documentales.
+
+---
+
+## 💡 ¿Qué se puede preguntar?
+
+El agente permite investigar diferentes aspectos del Ankylosaurus.
+
+**Ejemplos de preguntas:**
+
+1. ¿Qué es el Ankylosaurus y cuáles eran sus principales características?
+2. ¿En qué periodo geológico vivió?
+3. ¿Cómo se defendía de sus depredadores?
+4. ¿Cómo funcionaba la maza de su cola?
+5. ¿De qué se alimentaba?
+6. ¿Dónde habitaba?
+7. ¿Qué fósiles se han descubierto?
+8. ¿Qué relación pudo tener con el Tyrannosaurus rex?
+9. ¿Qué se conoce sobre su comportamiento?
+10. ¿Qué ocurrió con el Ankylosaurus al final del Cretácico?
+
+**Nota:** Las preguntas se relacionan con los documentos indexados. Se recomienda activar RAG para recuperar información documental y consultar las referencias proporcionadas.
+
+Las interpretaciones sobre comportamiento y defensa pueden incluir hipótesis científicas, ya que no todos los aspectos de su vida pueden comprobarse mediante fósiles.
+
+---
+
+## 🎨 Diseño de la interfaz
+
+La aplicación utiliza una interfaz moderna inspirada en un **museo paleontológico**, con una combinación de colores naturales:
+
+- Verde profundo.
+- Verde salvia.
+- Bronce.
+- Arena.
+- Marfil.
+
+El diseño está organizado en tres secciones principales:
+
+**1. Espacio de investigación:** permite escribir preguntas, activar RAG y comparar respuestas.
+
+**2. Bitácora de investigación:** muestra las respuestas generadas, sus fuentes y las opciones para copiar o exportar información.
+
+**3. Biblioteca documental:** permite visualizar, buscar y filtrar los documentos indexados.
+
+La interfaz es adaptable a diferentes tamaños de pantalla.
+
+---
+
+## 📂 Estructura del proyecto
+
+```text
+agente_documental_tic/
+│
+├── app/
+│   ├── core/
+│   │   └── config.py
+│   ├── models/
+│   │   └── documento.py
+│   ├── services/
+│   │   ├── agent_service.py
+│   │   ├── document_index.py
+│   │   ├── drive_service.py
+│   │   └── sync_service.py
+│   └── main.py
+│
+├── assets/
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       └── app.js
+│
+├── data/
+│   └── manifest.json
+│
+├── scripts/
+│   └── export_vercel_vars.py
+│
+├── tests/
+│
+├── index.html
+├── index.py
+├── iniciar_local.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
-Activar entorno:
+Los archivos que contienen credenciales y datos privados se mantienen fuera del repositorio.
+
+---
+
+## 💻 Ejecución local
+
+### 1. Clonar el repositorio
+
+```powershell
+git clone https://github.com/NicoleLares/agente_documental_tic.git
+cd agente_documental_tic
+```
+
+### 2. Crear el entorno virtual
+
+```powershell
+python -m venv .venv
+```
+
+### 3. Activar el entorno virtual
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-Instalar dependencias:
+### 4. Instalar las dependencias
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-Crear archivo de variables:
+### 5. Configurar las variables de entorno
 
-```powershell
-Copy-Item .env.example .env
-```
-
-Configurar el archivo `.env`:
+Crear el archivo `.env` utilizando `.env.example` como referencia.
 
 ```dotenv
 OPENAI_API_KEY=
@@ -100,15 +216,13 @@ LOCAL_ADMIN_KEY=
 PORT=5000
 ```
 
-Se deben colocar los valores reales de OpenAI y Google Drive.
+Agregar los valores correspondientes.
 
-La variable `VECTOR_STORE_ID` puede permanecer vacía antes de la primera sincronización, ya que el identificador se genera al crear el índice.
+También se necesita el archivo `credentials.json` generado desde Google Cloud para realizar la autorización OAuth en localhost.
 
-No insertar claves privadas en el código JavaScript ni en el navegador.
+Las credenciales privadas no deben publicarse en GitHub.
 
-## 4. Ejecutar localmente
-
-Con el entorno virtual activado, ejecutar:
+### 6. Iniciar la aplicación
 
 ```powershell
 python iniciar_local.py
@@ -118,117 +232,44 @@ Abrir en el navegador:
 
 http://127.0.0.1:5000
 
-Seleccionar **Sincronizar Drive** para autorizar Google, descargar o exportar los documentos e indexarlos.
+### 7. Sincronizar Google Drive
 
-La primera ejecución abre el navegador de autorización OAuth en la computadora donde está ejecutándose Python.
+Desde la interfaz local, seleccionar **Sincronizar Drive**.
 
-Posteriormente se pueden realizar consultas utilizando los documentos.
+El sistema:
 
-Para comprobar el funcionamiento de RAG, desactivar File Search y repetir exactamente la misma pregunta con File Search activado.
+1. Autoriza el acceso a Google Drive.
+2. Obtiene los documentos de la carpeta configurada.
+3. Descarga o exporta los archivos admitidos.
+4. Sincroniza el índice de OpenAI.
+5. Actualiza el manifiesto documental.
+6. Muestra los documentos en la biblioteca.
 
-**Importante:** la sincronización está restringida a localhost.
+Si se configura `LOCAL_ADMIN_KEY`, la petición de sincronización debe incluir la cabecera administrativa correspondiente. El botón normal de la interfaz no envía esa clave.
 
-Si se configura `LOCAL_ADMIN_KEY`, se debe proporcionar la cabecera `X-Admin-Key` mediante Thunder Client para `/api/sync`.
+---
 
-## 5. Endpoints
+## 🌐 Despliegue web
 
-| Método | Ruta | Función |
-|---|---|---|
-| GET | `/api/health` | Comprueba configuración y servidor. |
-| GET | `/api/documents` | Muestra los documentos indexados. |
-| POST | `/api/sync` | Sincroniza los cambios desde localhost. |
-| POST | `/api/ask` | Realiza consultas con OpenAI. |
-
-Ejemplo JSON para Thunder Client:
-
-```json
-{
-  "question": "¿Qué es la inteligencia artificial según mis documentos?",
-  "use_search": true
-}
-```
-
-## Documentos y sugerencias para investigar
-
-En las pruebas académicas se sincronizaron **5 documentos** sin errores:
-
-- `Conceptos_IA.txt`
-- `Herramientas_IA.txt`
-- `IA_Educacion.pdf`
-- `Introduccion_IA.pdf`
-- `Ventajas_y_Desafios_IA` (Google Docs)
-
-### ¿Qué se puede investigar?
-
-El agente permite realizar consultas sobre los documentos indexados.
-
-Algunas preguntas sugeridas son:
-
-1. ¿Qué es la inteligencia artificial y cuáles son sus conceptos básicos?
-2. ¿Qué herramientas de IA se describen y para qué sirven?
-3. ¿Cómo puede utilizarse la inteligencia artificial en la educación?
-4. ¿Cuáles son las ventajas y los desafíos de la IA?
-5. ¿Cómo se relacionan los conceptos de dos documentos diferentes?
-6. ¿Puedes resumir uno de los documentos y citar sus fuentes?
-7. ¿Qué diferencias existen entre las aplicaciones y herramientas de IA?
-8. ¿Cuáles son las ideas principales del documento Introduccion_IA.pdf?
-
-**Nota de orientación:** estas preguntas se inspiran en los títulos de los documentos disponibles. Se recomienda verificar cada respuesta con las fuentes originales.
-
-Para recuperar información documental, activar **Usar mis documentos (RAG)**.
-
-## 6. Experimentos
-
-1. Ejecutar una pregunta específica presente en los archivos sin File Search.
-2. Repetir la misma pregunta con File Search y revisar las fuentes.
-3. Probar temas ausentes y verificar si el agente reconoce la falta de evidencia.
-4. Agregar un documento con información nueva y sincronizar nuevamente.
-5. Modificar un documento y verificar que el índice se actualice correctamente.
-6. Eliminar un documento de prueba y comprobar que desaparezca del manifiesto.
-
-**Limitaciones:** las respuestas RAG pueden contener errores. Es necesario verificar la información contra los documentos originales.
-
-Las eliminaciones pueden tardar en reflejarse debido a la consistencia eventual del índice.
-
-## 7. Pruebas automáticas
-
-Ejecutar desde la raíz del proyecto:
-
-```powershell
-pytest -q
-```
-
-Las pruebas locales automatizadas no necesitan consumir la API de OpenAI.
-
-## 8. Publicación con GitHub Pages y Vercel
-
-El proyecto fue probado localmente con OAuth 2.0, Google Drive, indexación de cinco documentos y consultas RAG con fuentes.
-
-El despliegue académico utiliza dos servicios.
+El proyecto utiliza GitHub Pages y Vercel.
 
 ### GitHub Pages
 
-Publica la interfaz desarrollada con:
+Se encarga de publicar la interfaz HTML, CSS y JavaScript.
 
-- HTML5.
-- CSS3.
-- JavaScript.
+**Sitio web:**
 
-La interfaz permite consultar documentos y visualizar las respuestas del agente.
+https://nicolelares.github.io/agente_documental_tic/
 
 ### Vercel
 
-Aloja la aplicación FastAPI y atiende las solicitudes:
+Ejecuta el backend FastAPI, que permite realizar consultas a OpenAI y recuperar información del índice documental.
 
-- `/api/health`
-- `/api/documents`
-- `/api/ask`
+**Backend:**
 
-La sincronización de Google Drive mediante OAuth de escritorio se mantiene únicamente en localhost.
+https://agente-documental-tic-xjgr.vercel.app/
 
-### Variables de Vercel
-
-Las siguientes variables se configuran en **Project → Environment Variables**, dentro del entorno Production:
+### Variables utilizadas en Vercel
 
 ```dotenv
 OPENAI_API_KEY=
@@ -237,96 +278,119 @@ VECTOR_STORE_ID=
 DOCUMENT_MANIFEST_B64=
 ```
 
-`VECTOR_STORE_ID` y `DOCUMENT_MANIFEST_B64` proceden del índice documental creado localmente.
+Estas variables se configuran directamente en el panel de Vercel.
 
-Para preparar los datos puede utilizarse:
+Para preparar las variables documentales a partir de la sincronización local:
 
 ```powershell
 python scripts/export_vercel_vars.py
 ```
 
-Los valores privados deben configurarse directamente en Vercel y no publicarse en GitHub.
+Cuando se modifican los documentos en Google Drive, es necesario sincronizar nuevamente desde localhost y actualizar los datos del índice en Vercel.
 
-Después de modificar variables de entorno es necesario realizar un nuevo despliegue.
+El archivo `DOCUMENT_MANIFEST_B64` contiene el manifiesto codificado, no una conexión directa de Vercel con Google Drive.
 
-### Actualización del índice documental
+Después de actualizar las variables se debe realizar un nuevo despliegue.
 
-1. Agregar o modificar documentos autorizados en Google Drive.
-2. Ejecutar la sincronización desde localhost.
-3. Actualizar las variables documentales de Vercel cuando corresponda.
-4. Realizar un nuevo despliegue.
-5. Comprobar el inventario y realizar una consulta utilizando RAG.
+---
 
-### Enlaces del proyecto
+## 🔗 Endpoints de la API
 
-**Repositorio GitHub:**  
-https://github.com/NicoleLares/agente_documental_tic
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/health` | Comprueba el estado del servidor |
+| GET | `/api/documents` | Muestra los documentos indexados |
+| POST | `/api/ask` | Realiza preguntas al agente |
+| POST | `/api/sync` | Sincroniza documentos desde localhost |
 
-**Interfaz GitHub Pages:**  
-https://nicolelares.github.io/agente_documental_tic/
+Ejemplo de consulta:
 
-**Backend Vercel:**  
-https://agente-documental-tic-xjgr.vercel.app/
+```json
+{
+  "question": "¿Cómo se defendía el Ankylosaurus?",
+  "use_search": true
+}
+```
 
-### Seguridad
+---
 
-El despliegue académico no debe considerarse listo para uso público ilimitado.
+## 🧪 Pruebas realizadas
 
-Antes de ofrecer consultas al público se recomienda:
+Durante el desarrollo se verificaron:
 
-- Proteger el endpoint `/api/ask`.
-- Implementar autenticación y límites de consumo.
-- Revisar los permisos de acceso a los documentos.
-- Evitar revelar información privada.
-- Mantener las credenciales fuera del repositorio.
+- Conexión con Google Drive API.
+- Autorización mediante OAuth 2.0.
+- Sincronización de los cinco documentos paleontológicos.
+- Actualización del índice documental.
+- Eliminación de registros antiguos del índice.
+- Consultas a OpenAI con File Search.
+- Recuperación de respuestas con fuentes verificables.
+- Comparación de respuestas con y sin RAG.
+- Funcionamiento de la aplicación en localhost.
+- Conexión entre GitHub Pages y Vercel.
+- Configuración de variables de entorno y CORS.
+- Conservación de la funcionalidad durante el rediseño visual.
 
-Los archivos:
+Para ejecutar las pruebas automáticas:
+
+```powershell
+pytest -q
+```
+
+---
+
+## 🔐 Seguridad y consideraciones
+
+El proyecto utiliza variables de entorno para proteger las credenciales de los servicios.
+
+No deben publicarse:
 
 - `.env`
 - `credentials.json`
 - `token.json`
-- `data/manifest.json`
+- Claves privadas de OpenAI.
+- Manifiestos con información documental privada.
 
-deben permanecer fuera de GitHub.
+La sincronización de Google Drive está restringida a localhost.
 
-La configuración CORS permite controlar los orígenes autorizados en navegadores, pero no sustituye la autenticación.
+**Importante:** antes de permitir el uso público sin restricciones, se debe implementar autenticación y limitación de solicitudes en `/api/ask`, así como controles de acceso a los documentos y límites de consumo de OpenAI.
 
-## 9. Costos y privacidad
+CORS no sustituye la autenticación.
 
-OpenAI puede generar cargos por el uso de modelos, File Search y almacenamiento.
-
-Se recomienda utilizar documentos académicos autorizados, evitar información confidencial y establecer límites de presupuesto.
-
-Si alguna credencial se publica accidentalmente, debe revocarse y reemplazarse.
-
-## Entrega
-
-Para la entrega académica se presentan:
-
-- Repositorio del proyecto en GitHub.
-- URL de la interfaz publicada mediante GitHub Pages.
-- URL del backend desplegado en Vercel.
-- Evidencias de conexión con Google Drive y OAuth 2.0.
-- Evidencias de los documentos indexados.
-- Pruebas de consultas con RAG.
-- Conclusión general del proyecto.
-
-## Conclusión general
-
-El desarrollo de **Archivo TIC IA** permitió integrar Google Drive API, OAuth 2.0, FastAPI y OpenAI para construir una herramienta de consulta documental inteligente.
-
-Mediante la sincronización y el uso de Vector Stores y File Search (RAG), fue posible realizar preguntas sobre los documentos autorizados y recuperar respuestas acompañadas de referencias que permiten comprobar la información utilizada.
-
-Uno de los aprendizajes más importantes fue comprender cómo se conectan distintos servicios para lograr que una aplicación funcione tanto localmente como desde Internet. Durante el proceso surgieron dificultades relacionadas con las rutas de Python, las variables de entorno, la configuración CORS y el despliegue en Vercel, las cuales permitieron fortalecer los conocimientos de programación, integración de APIs y resolución de errores.
-
-Asimismo, la comparación de respuestas con y sin RAG ayudó a comprender la importancia de consultar fuentes documentales para obtener información más relevante y sustentada.
-
-En conclusión, este proyecto demuestra cómo la inteligencia artificial puede facilitar la búsqueda y el análisis de información académica mediante una herramienta accesible e interactiva. También permitió reforzar la importancia de la seguridad, la organización de los documentos y la verificación de las fuentes originales.
+Las respuestas generadas con inteligencia artificial deben contrastarse con las fuentes originales.
 
 ---
 
-**Tecnologico Nacional de Mexico - ITP**  
-**Desarrollado por:** Nicole Dayana Esparza Lares  
-**No. Control:** 22200208
+## 📝 Conclusión general
 
-**Proyecto académico — Archivo TIC IA**
+El desarrollo de Archivo TIC IA permitió comprender cómo se integran diferentes tecnologías para crear un agente documental inteligente capaz de recuperar y analizar información almacenada en Google Drive.
+
+A través de Google Drive API y OAuth 2.0 se logró acceder a documentos autorizados, mientras que OpenAI Vector Stores y File Search permitieron indexar la información y realizar consultas utilizando RAG.
+
+Durante el desarrollo se resolvieron problemas relacionados con la autenticación, sincronización de documentos, variables de entorno, configuración CORS y despliegue de aplicaciones web. Esto permitió fortalecer los conocimientos sobre programación, integración de servicios y resolución de errores.
+
+La adaptación del proyecto a la temática del Ankylosaurus permitió demostrar que un agente documental puede especializarse en diferentes áreas del conocimiento, utilizando documentos específicos como base para sus respuestas.
+
+Finalmente, se consiguió una aplicación funcional, con una interfaz inspirada en un museo paleontológico, capaz de consultar cinco documentos sobre el Ankylosaurus y mostrar referencias a las fuentes utilizadas.
+
+En conclusión, este proyecto demuestra la utilidad de la inteligencia artificial como herramienta de apoyo para la investigación, el aprendizaje y la recuperación de información académica.
+
+---
+
+## 👩‍💻 Créditos académicos
+
+**Tecnológico Nacional de México - ITP**
+
+**Proyecto:** Archivo TIC IA — Agente Documental del Ankylosaurus
+
+**Actividad:** 2.3 Agente documental con Google Drive
+
+**Desarrollado por:** Nicole Dayana Esparza Lares
+
+**No. de Control:** 22200208
+
+**Asignatura:** Inteligencia Artificial Aplicada a las TIC
+
+---
+
+🦖 **Archivo TIC IA — Investigación paleontológica asistida con inteligencia artificial.**
